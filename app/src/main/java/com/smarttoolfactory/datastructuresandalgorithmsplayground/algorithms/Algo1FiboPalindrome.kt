@@ -1,6 +1,6 @@
 package com.smarttoolfactory.datastructuresandalgorithmsplayground.algorithms
 
-import com.smarttoolfactory.datastructuresandalgorithmstutorials.algorithms.TestFunctions.Companion.palindromeInt
+import com.smarttoolfactory.datastructuresandalgorithmsplayground.algorithms.TestFunctions.Companion.palindromeInt
 
 
 fun main() {

@@ -1,9 +1,10 @@
 package com.smarttoolfactory.datastructuresandalgorithmsplayground.algorithms
 
-import com.smarttoolfactory.datastructuresandalgorithmstutorials.algorithms.SearchAlgorithms.Companion.binarySearch
-import com.smarttoolfactory.datastructuresandalgorithmstutorials.algorithms.SearchAlgorithms.Companion.binarySearchRecursive
-import com.smarttoolfactory.datastructuresandalgorithmstutorials.algorithms.SearchAlgorithms.Companion.jumpSearch
-import com.smarttoolfactory.datastructuresandalgorithmstutorials.algorithms.SearchAlgorithms.Companion.linearSearch
+
+import com.smarttoolfactory.datastructuresandalgorithmsplayground.algorithms.SearchAlgorithms.Companion.binarySearch
+import com.smarttoolfactory.datastructuresandalgorithmsplayground.algorithms.SearchAlgorithms.Companion.binarySearchRecursive
+import com.smarttoolfactory.datastructuresandalgorithmsplayground.algorithms.SearchAlgorithms.Companion.jumpSearch
+import com.smarttoolfactory.datastructuresandalgorithmsplayground.algorithms.SearchAlgorithms.Companion.linearSearch
 import kotlin.math.floor
 import kotlin.math.min
 import kotlin.math.sqrt
@@ -11,7 +12,32 @@ import kotlin.math.sqrt
 fun main() {
 
 
-    val intArray = arrayOf(1, 2, 4, 6, 9, 11, 15, 23, 30, 32, 38, 40, 49, 56, 57, 67, 80, 83, 88, 89, 94, 99, 101, 200)
+    val intArray = arrayOf(
+        1,
+        2,
+        4,
+        6,
+        9,
+        11,
+        15,
+        23,
+        30,
+        32,
+        38,
+        40,
+        49,
+        56,
+        57,
+        67,
+        80,
+        83,
+        88,
+        89,
+        94,
+        99,
+        101,
+        200
+    )
 
     // Linear Search
     val indexLinear = linearSearch(80, intArray)
@@ -105,7 +131,12 @@ class SearchAlgorithms {
          * Space complexity O(logN), if implemented recursively,
          * it needs to store the call to the method on a stack. This may require O(n) space.
          */
-        fun binarySearchRecursive(target: Int, leftIndex: Int, rightIndex: Int, array: Array<Int>): Int {
+        fun binarySearchRecursive(
+            target: Int,
+            leftIndex: Int,
+            rightIndex: Int,
+            array: Array<Int>
+        ): Int {
 
             val itemIndex = -1
 
@@ -246,7 +277,7 @@ class SearchAlgorithms {
 
             map[nums[i]] = i
 
-            val complement  = target - nums[i]
+            val complement = target - nums[i]
 
             if (map.contains(complement)) {
                 return arrayOf(i, map[complement]!!)
