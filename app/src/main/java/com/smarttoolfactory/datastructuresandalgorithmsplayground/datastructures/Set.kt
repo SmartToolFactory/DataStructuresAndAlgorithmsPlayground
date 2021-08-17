@@ -1,7 +1,8 @@
 package com.smarttoolfactory.datastructuresandalgorithmsplayground.datastructures
 
-import com.smarttoolfactory.datastructuresandalgorithmstutorials.model.Currency
-import com.smarttoolfactory.datastructuresandalgorithmstutorials.model.CurrencyHashed
+import com.smarttoolfactory.datastructuresandalgorithmsplayground.model.Currency
+import com.smarttoolfactory.datastructuresandalgorithmsplayground.model.CurrencyHashed
+
 
 fun main() {
     val currency1 = Currency("USD")

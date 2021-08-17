@@ -1,8 +1,8 @@
 package com.smarttoolfactory.datastructuresandalgorithmsplayground.datastructures
 
-import com.smarttoolfactory.datastructuresandalgorithmstutorials.model.Currency
-import com.smarttoolfactory.datastructuresandalgorithmstutorials.model.CurrencyHashed
-import java.util.*
+
+import com.smarttoolfactory.datastructuresandalgorithmsplayground.model.Currency
+import com.smarttoolfactory.datastructuresandalgorithmsplayground.model.CurrencyHashed
 
 fun main() {
     // 🔥🔥🔥Hash Map KEYS should both meet the conditions of EQUALS and same HASH CODE

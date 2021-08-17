@@ -6,9 +6,11 @@ fun main() {
 //    val res = fibonacciRecursive(4)
 //    print("Fibonacci res: $res")
 
-    val sumRecursive = sum(4)
+    val sumRecursive = sumTailRecursive2(4)
     println("Sum: $sumRecursive")
 
+//    val sumOfDigits = sumOfDigitsInNumber(1234)
+//    println("Sum of digits in number: $sumOfDigits")
 }
 
 
@@ -88,12 +90,12 @@ fun sumTailRecursive2(n: Int, sum: Int = 0): Int {
 fun sum(n: Int): Int {
     return if (n >= 1) {
         println("🚀 sum() START n: $n")
-        val result =   sum(n - 1) + n
+        val result = sum(n - 1) + n
         println("🔥 sum() n: $n, result: $result")
         result
     } else {
         println("🍏 sum() Return n: $n")
-         n
+        n
     }
 
     /*
@@ -116,3 +118,30 @@ fun tailSum(currentSum: Int, n: Int): Int {
     } else tailSum(currentSum + n, n - 1)
 }
 
+/**
+ * Sums digits in an number. For instance ***1234*** returns ***10***
+ */
+fun sumOfDigitsInNumber(n: Int): Int {
+    return if (n == 0) {
+        println("🍏 sumOfDigitsInNumber() Return n: $n")
+        0
+    } else {
+        println("🚀 sumOfDigitsInNumber() START n: $n")
+        val result = n % 10 + sumOfDigitsInNumber(n / 10)
+        println("🔥 sumOfDigitsInNumber() n: $n, result: $result")
+        result
+    }
+
+    /*
+        🚀 sumOfDigitsInNumber() START n: 1234
+        🚀 sumOfDigitsInNumber() START n: 123
+        🚀 sumOfDigitsInNumber() START n: 12
+        🚀 sumOfDigitsInNumber() START n: 1
+        🍏 sumOfDigitsInNumber() Return n: 0
+        🔥 sumOfDigitsInNumber() n: 1, result: 1
+        🔥 sumOfDigitsInNumber() n: 12, result: 3
+        🔥 sumOfDigitsInNumber() n: 123, result: 6
+        🔥 sumOfDigitsInNumber() n: 1234, result: 10
+        Sum of digits in number: 10
+     */
+}
