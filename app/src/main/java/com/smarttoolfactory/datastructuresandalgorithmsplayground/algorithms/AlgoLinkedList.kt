@@ -6,12 +6,12 @@ import androidx.annotation.RequiresApi
 @RequiresApi(Build.VERSION_CODES.N)
 fun main() {
     val node = initNode()
-//    node.printNodes()
+    node.printNodes()
 
-//    println("REVERSED")
-//    reverseLinkedList(node)
-//    node.printNodes()
-    val node2 = reverseLinkedListRecursively(node)
+    println("REVERSED")
+    val node1 = reverseLinkedList(node)
+    node1?.printNodes()
+//    val node2 = reverseLinkedListRecursively(node)
 //    node2?.printNodes()
 
 //    val indexOf = findIndexOfElement(node, 2)
@@ -25,7 +25,7 @@ fun main() {
 }
 
 
-fun reverseLinkedList(head: Node) {
+fun reverseLinkedList(head: Node): Node? {
     var prev: Node? = null
     var current: Node? = head
 
@@ -35,6 +35,8 @@ fun reverseLinkedList(head: Node) {
         prev = current
         current = nextTemp
     }
+
+    return prev
 }
 
 fun reverseLinkedListRecursively(head: Node?): Node? {
@@ -51,9 +53,6 @@ fun reverseLinkedListRecursively(head: Node?): Node? {
     p?.printNodes()
     return p
 }
-
-
-
 
 fun findIndexOfElement(node: Node?, item: Int): Int {
     if (node == null) return -1
