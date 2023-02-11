@@ -48,21 +48,21 @@ fun main() {
         > GET foo
         456
      */
-    transactionStore.setValue("bar", "123")
-    val result = transactionStore.getValue("bar")
-    println("result: $result")
-    transactionStore.begin()
-    transactionStore.setValue("foo", "456")
-    val result2 = transactionStore.getValue("bar")
-    println("result2: $result2")
-    transactionStore.delete("bar")
-    transactionStore.commit()
-    val result3 = transactionStore.getValue("bar")
-    println("result3: $result3")
-    transactionStore.rollback()
-    val result4 = transactionStore.getValue("foo")
-    println("result4: $result4")
-    println("END...")
+//    transactionStore.setValue("bar", "123")
+//    val result = transactionStore.getValue("bar")
+//    println("result: $result")
+//    transactionStore.begin()
+//    transactionStore.setValue("foo", "456")
+//    val result2 = transactionStore.getValue("bar")
+//    println("result2: $result2")
+//    transactionStore.delete("bar")
+//    transactionStore.commit()
+//    val result3 = transactionStore.getValue("bar")
+//    println("result3: $result3")
+//    transactionStore.rollback()
+//    val result4 = transactionStore.getValue("foo")
+//    println("result4: $result4")
+//    println("END...")
 
     /*
         Rollback a transaction
@@ -154,44 +154,53 @@ fun main() {
     /*
         Random test
      */
-//    transactionStore.setValue("foo", "123")
-//    transactionStore.setValue("bar", "456")
-//    transactionStore.begin()
-//    transactionStore.setValue("row", "100")
-//    transactionStore.begin()
-//    transactionStore.setValue("apple", "red")
-//    transactionStore.begin()
-//    transactionStore.delete("foo")
-//    transactionStore.commit()
-//   val result1 = transactionStore.getValue("foo")
-//    println("result1: $result1")
-//    val result2 = transactionStore.getValue("apple")
-//    println("result2: $result2")
-//    transactionStore.rollback()
-//    val result3 = transactionStore.getValue("apple")
-//    println("result3: $result3")
-//    val result4 = transactionStore.getValue("foo")
-//    println("result4: $result4")
+    transactionStore.setValue("foo", "123")
+    transactionStore.setValue("bar", "456")
+    transactionStore.begin()
+    transactionStore.setValue("row", "100")
+    transactionStore.begin()
+    transactionStore.setValue("apple", "red")
+    transactionStore.begin()
+    transactionStore.delete("foo")
+    transactionStore.commit()
+   val result1 = transactionStore.getValue("foo")
+    println("result1: $result1")
+    val result2 = transactionStore.getValue("apple")
+    println("result2: $result2")
+    transactionStore.rollback()
+    val result3 = transactionStore.getValue("apple")
+    println("result3: $result3")
+    val result4 = transactionStore.getValue("foo")
+    println("result4: $result4")
+    val result5 = transactionStore.getValue("row")
+    println("result5: $result5")
+    transactionStore.rollback()
+    val result6 = transactionStore.getValue("row")
+    println("result6: $result6")
 
 }
 
-private class LocalDataStore(){
+private class LocalDataStore {
+
+   private val persistedStore: HashMap<String, String> = hashMapOf()
 
     fun clear(){
-
+        persistedStore.clear()
     }
 
-    fun set(map: Map<String, String>){
-
+    fun putAll(map: Map<String, String>){
+        persistedStore.putAll(map)
     }
+
+    fun getDataMap() = persistedStore.toMutableMap()
 }
 
 private class TransactionStoreImpl2 {
 
-     val persistedStore: HashMap<String, String> = hashMapOf()
+    val localDataStore = LocalDataStore()
 
     val transactionStack = LinkedList<Transaction>().apply {
-        add(Transaction(persistedStore.toMutableMap()))
+        add(Transaction(localDataStore.getDataMap()))
     }
 
     val currentTransaction
@@ -214,9 +223,10 @@ private class TransactionStoreImpl2 {
 
     fun commit() {
         if (transactionStack.size > 1) {
-            persistedStore.clear()
-            persistedStore.putAll(currentTransaction.map)
+            localDataStore.clear()
+            localDataStore.putAll(currentTransaction.map)
             transactionStack.removeLast()
+            currentTransaction.map = localDataStore.getDataMap()
         } else {
             println("no transaction")
         }

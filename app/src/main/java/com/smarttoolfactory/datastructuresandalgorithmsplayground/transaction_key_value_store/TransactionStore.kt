@@ -46,20 +46,20 @@ fun main() {
         > GET foo
         456
      */
-//    transactionStore.setValue("bar", "123")
-//    val result = transactionStore.getValue("bar")
-//    println("result: $result")
-//    transactionStore.begin()
-//    transactionStore.setValue("foo", "456")
-//    val result2 = transactionStore.getValue("bar")
-//    println("result2: $result2")
-//    transactionStore.delete("bar")
-//    transactionStore.commit()
-//    val result3 = transactionStore.getValue("bar")
-//    println("result3: $result3")
-//    transactionStore.rollback()
-//    val result4 = transactionStore.getValue("foo")
-//    println("result4: $result4")
+    transactionStore.setValue("bar", "123")
+    val result = transactionStore.getValue("bar")
+    println("result: $result")
+    transactionStore.begin()
+    transactionStore.setValue("foo", "456")
+    val result2 = transactionStore.getValue("bar")
+    println("result2: $result2")
+    transactionStore.delete("bar")
+    transactionStore.commit()
+    val result3 = transactionStore.getValue("bar")
+    println("result3: $result3")
+    transactionStore.rollback()
+    val result4 = transactionStore.getValue("foo")
+    println("result4: $result4")
 
     /*
         Rollback a transaction
@@ -121,31 +121,31 @@ fun main() {
         123
      */
 
-    transactionStore.setValue("foo", "123")
-    transactionStore.setValue("bar", "456")
-    // NEW TRANSACTION...
-    transactionStore.begin()
-    transactionStore.setValue("foo", "456")
-    // NEW TRANSACTION...
-    transactionStore.begin()
-    val count = transactionStore.count("456")
-    println("COUNT: $count")
-    val result = transactionStore.getValue("foo")
-    println("result: $result")
-    transactionStore.setValue("foo", "789")
-    val result2 = transactionStore.getValue("foo")
-    println("result2: $result2")
-    // ROLLBACK...
-    transactionStore.rollback()
-    val result3 = transactionStore.getValue("foo")
-    println("result3: $result3")
-    transactionStore.delete("foo")
-    val result4 = transactionStore.getValue("foo")
-    println("result4: $result4")
-    // ROLLBACK...
-    transactionStore.rollback()
-    val result5 = transactionStore.getValue("foo")
-    println("result5: $result5")
+//    transactionStore.setValue("foo", "123")
+//    transactionStore.setValue("bar", "456")
+//    // NEW TRANSACTION...
+//    transactionStore.begin()
+//    transactionStore.setValue("foo", "456")
+//    // NEW TRANSACTION...
+//    transactionStore.begin()
+//    val count = transactionStore.count("456")
+//    println("COUNT: $count")
+//    val result = transactionStore.getValue("foo")
+//    println("result: $result")
+//    transactionStore.setValue("foo", "789")
+//    val result2 = transactionStore.getValue("foo")
+//    println("result2: $result2")
+//    // ROLLBACK...
+//    transactionStore.rollback()
+//    val result3 = transactionStore.getValue("foo")
+//    println("result3: $result3")
+//    transactionStore.delete("foo")
+//    val result4 = transactionStore.getValue("foo")
+//    println("result4: $result4")
+//    // ROLLBACK...
+//    transactionStore.rollback()
+//    val result5 = transactionStore.getValue("foo")
+//    println("result5: $result5")
 
     /*
         Random test
@@ -172,7 +172,7 @@ fun main() {
 }
 
 internal data class Transaction(
-    val map: MutableMap<String, String> = hashMapOf()
+    var map: MutableMap<String, String> = hashMapOf()
 )
 
 private class TransactionStoreImpl {
