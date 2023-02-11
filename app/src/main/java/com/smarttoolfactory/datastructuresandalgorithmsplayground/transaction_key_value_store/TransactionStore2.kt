@@ -2,8 +2,10 @@ package com.smarttoolfactory.datastructuresandalgorithmsplayground.transaction_k
 
 import java.util.*
 
+
 fun main() {
-    val transactionStore = TransactionStoreImpl()
+    val transactionStore = TransactionStoreImpl2()
+
 //    transactionStore.setValue("foo", "123")
 //    val result = transactionStore.getValue("foo")
 //    println("Result: $result")
@@ -46,20 +48,21 @@ fun main() {
         > GET foo
         456
      */
-//    transactionStore.setValue("bar", "123")
-//    val result = transactionStore.getValue("bar")
-//    println("result: $result")
-//    transactionStore.begin()
-//    transactionStore.setValue("foo", "456")
-//    val result2 = transactionStore.getValue("bar")
-//    println("result2: $result2")
-//    transactionStore.delete("bar")
-//    transactionStore.commit()
-//    val result3 = transactionStore.getValue("bar")
-//    println("result3: $result3")
-//    transactionStore.rollback()
-//    val result4 = transactionStore.getValue("foo")
-//    println("result4: $result4")
+    transactionStore.setValue("bar", "123")
+    val result = transactionStore.getValue("bar")
+    println("result: $result")
+    transactionStore.begin()
+    transactionStore.setValue("foo", "456")
+    val result2 = transactionStore.getValue("bar")
+    println("result2: $result2")
+    transactionStore.delete("bar")
+    transactionStore.commit()
+    val result3 = transactionStore.getValue("bar")
+    println("result3: $result3")
+    transactionStore.rollback()
+    val result4 = transactionStore.getValue("foo")
+    println("result4: $result4")
+    println("END...")
 
     /*
         Rollback a transaction
@@ -95,6 +98,7 @@ fun main() {
 //    val result4 = transactionStore.getValue("bar")
 //    println("result4: $result4")
 //    transactionStore.commit()
+//    println("END...")
 
     /*
         Nested transactions
@@ -121,31 +125,31 @@ fun main() {
         123
      */
 
-    transactionStore.setValue("foo", "123")
-    transactionStore.setValue("bar", "456")
-    // NEW TRANSACTION...
-    transactionStore.begin()
-    transactionStore.setValue("foo", "456")
-    // NEW TRANSACTION...
-    transactionStore.begin()
-    val count = transactionStore.count("456")
-    println("COUNT: $count")
-    val result = transactionStore.getValue("foo")
-    println("result: $result")
-    transactionStore.setValue("foo", "789")
-    val result2 = transactionStore.getValue("foo")
-    println("result2: $result2")
-    // ROLLBACK...
-    transactionStore.rollback()
-    val result3 = transactionStore.getValue("foo")
-    println("result3: $result3")
-    transactionStore.delete("foo")
-    val result4 = transactionStore.getValue("foo")
-    println("result4: $result4")
-    // ROLLBACK...
-    transactionStore.rollback()
-    val result5 = transactionStore.getValue("foo")
-    println("result5: $result5")
+//    transactionStore.setValue("foo", "123")
+//    transactionStore.setValue("bar", "456")
+//    // NEW TRANSACTION...
+//    transactionStore.begin()
+//    transactionStore.setValue("foo", "456")
+//    // NEW TRANSACTION...
+//    transactionStore.begin()
+//    val count = transactionStore.count("456")
+//    println("COUNT: $count")
+//    val result = transactionStore.getValue("foo")
+//    println("result: $result")
+//    transactionStore.setValue("foo", "789")
+//    val result2 = transactionStore.getValue("foo")
+//    println("result2: $result2")
+//    // ROLLBACK...
+//    transactionStore.rollback()
+//    val result3 = transactionStore.getValue("foo")
+//    println("result3: $result3")
+//    transactionStore.delete("foo")
+//    val result4 = transactionStore.getValue("foo")
+//    println("result4: $result4")
+//    // ROLLBACK...
+//    transactionStore.rollback()
+//    val result5 = transactionStore.getValue("foo")
+//    println("result5: $result5")
 
     /*
         Random test
@@ -171,36 +175,47 @@ fun main() {
 
 }
 
-internal data class Transaction(
-    val map: MutableMap<String, String> = hashMapOf()
-)
+private class LocalDataStore(){
 
-private class TransactionStoreImpl {
+    fun clear(){
 
-    private var currentKeyValueStore: MutableMap<String, String> = hashMapOf()
-
-    val transactionStack = LinkedList<Transaction>().apply {
-        add(Transaction(currentKeyValueStore))
     }
 
+    fun set(map: Map<String, String>){
+
+    }
+}
+
+private class TransactionStoreImpl2 {
+
+     val persistedStore: HashMap<String, String> = hashMapOf()
+
+    val transactionStack = LinkedList<Transaction>().apply {
+        add(Transaction(persistedStore.toMutableMap()))
+    }
+
+    val currentTransaction
+        get() = transactionStack.last
+
     fun setValue(key: String, value: String) {
-        currentKeyValueStore[key] = value
+        currentTransaction.map[key] = value
     }
 
     fun getValue(key: String): String {
-        return currentKeyValueStore[key] ?: "key not set"
+        return currentTransaction.map[key] ?: "key not set"
     }
 
     fun begin() {
-        val tempMap = hashMapOf<String, String>().apply {
-            putAll(currentKeyValueStore)
-        }
-        currentKeyValueStore = tempMap
-        transactionStack.add(Transaction(currentKeyValueStore))
+        val temp = currentTransaction.map.toMutableMap()
+        val transaction = Transaction(temp)
+        transactionStack.add(transaction)
+        println()
     }
 
     fun commit() {
         if (transactionStack.size > 1) {
+            persistedStore.clear()
+            persistedStore.putAll(currentTransaction.map)
             transactionStack.removeLast()
         } else {
             println("no transaction")
@@ -210,18 +225,17 @@ private class TransactionStoreImpl {
     fun rollback() {
         if (transactionStack.size > 1) {
             transactionStack.removeLast()
-            currentKeyValueStore = transactionStack.last.map
         } else {
             println("> No transaction")
         }
     }
 
     fun delete(key: String) {
-        currentKeyValueStore.remove(key)
+        currentTransaction.map.remove(key)
     }
 
     fun count(value: String): Int {
-        return currentKeyValueStore.count {
+        return currentTransaction.map.count {
             it.value == value
         }
     }
