@@ -46,20 +46,20 @@ fun main() {
         > GET foo
         456
      */
-    transactionStore.setValue("bar", "123")
-    val result = transactionStore.getValue("bar")
-    println("result: $result")
-    transactionStore.begin()
-    transactionStore.setValue("foo", "456")
-    val result2 = transactionStore.getValue("bar")
-    println("result2: $result2")
-    transactionStore.delete("bar")
-    transactionStore.commit()
-    val result3 = transactionStore.getValue("bar")
-    println("result3: $result3")
-    transactionStore.rollback()
-    val result4 = transactionStore.getValue("foo")
-    println("result4: $result4")
+//    transactionStore.setValue("bar", "123")
+//    val result = transactionStore.getValue("bar")
+//    println("result: $result")
+//    transactionStore.begin()
+//    transactionStore.setValue("foo", "456")
+//    val result2 = transactionStore.getValue("bar")
+//    println("result2: $result2")
+//    transactionStore.delete("bar")
+//    transactionStore.commit()
+//    val result3 = transactionStore.getValue("bar")
+//    println("result3: $result3")
+//    transactionStore.rollback()
+//    val result4 = transactionStore.getValue("foo")
+//    println("result4: $result4")
 
     /*
         Rollback a transaction
@@ -121,32 +121,63 @@ fun main() {
         123
      */
 
+    transactionStore.setValue("foo", "123")
+    transactionStore.setValue("bar", "456")
+    // NEW TRANSACTION...
+    transactionStore.begin()
+    transactionStore.setValue("foo", "456")
+    // NEW TRANSACTION...
+    transactionStore.begin()
+    val count = transactionStore.count("456")
+    println("COUNT: $count")
+    val result = transactionStore.getValue("foo")
+    println("result: $result")
+    transactionStore.setValue("foo", "789")
+    val result2 = transactionStore.getValue("foo")
+    println("result2: $result2")
+    // ROLLBACK...
+    transactionStore.rollback()
+    val result3 = transactionStore.getValue("foo")
+    println("result3: $result3")
+    transactionStore.delete("foo")
+    val result4 = transactionStore.getValue("foo")
+    println("result4: $result4")
+    // ROLLBACK...
+    transactionStore.rollback()
+    val result5 = transactionStore.getValue("foo")
+    println("result5: $result5")
+
+    /*
+        Random test
+     */
 //    transactionStore.setValue("foo", "123")
 //    transactionStore.setValue("bar", "456")
 //    transactionStore.begin()
-//    transactionStore.setValue("foo", "456")
-//    val count = transactionStore.count("456")
-//    println("COUNT: $count")
-//    val result = transactionStore.getValue("foo")
-//    println("result: $result")
-//    transactionStore.setValue("foo", "789")
-//    val result2 = transactionStore.getValue("foo")
-//    println("result2: $result2")
+//    transactionStore.setValue("row", "100")
+//    transactionStore.begin()
+//    transactionStore.setValue("apple", "red")
+//    transactionStore.begin()
 //    transactionStore.delete("foo")
-//    val result3 = transactionStore.getValue("foo")
-//    println("result3: $result3")
+//    transactionStore.commit()
+//   val result1 = transactionStore.getValue("foo")
+//    println("result1: $result1")
+//    val result2 = transactionStore.getValue("apple")
+//    println("result2: $result2")
 //    transactionStore.rollback()
+//    val result3 = transactionStore.getValue("apple")
+//    println("result3: $result3")
 //    val result4 = transactionStore.getValue("foo")
 //    println("result4: $result4")
+
 }
 
-data class Transaction(
-    internal val map: MutableMap<String, String> = mutableMapOf()
+internal data class Transaction(
+    val map: HashMap<String, String> = hashMapOf()
 )
 
-class TransactionStoreImpl {
+private class TransactionStoreImpl {
 
-    private var currentKeyValueStore: MutableMap<String, String> = mutableMapOf()
+    private var currentKeyValueStore: HashMap<String, String> = hashMapOf()
 
     val transactionStack = LinkedList<Transaction>().apply {
         add(Transaction(currentKeyValueStore))
@@ -161,7 +192,7 @@ class TransactionStoreImpl {
     }
 
     fun begin() {
-        val tempMap = mutableMapOf<String, String>().apply {
+        val tempMap = hashMapOf<String, String>().apply {
             putAll(currentKeyValueStore)
         }
         currentKeyValueStore = tempMap
