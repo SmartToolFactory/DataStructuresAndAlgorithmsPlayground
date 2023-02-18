@@ -125,58 +125,58 @@ fun main() {
         123
      */
 
-//    transactionStore.setValue("foo", "123")
-//    transactionStore.setValue("bar", "456")
-//    // NEW TRANSACTION...
-//    transactionStore.begin()
-//    transactionStore.setValue("foo", "456")
-//    // NEW TRANSACTION...
-//    transactionStore.begin()
-//    val count = transactionStore.count("456")
-//    println("COUNT: $count")
-//    val result = transactionStore.getValue("foo")
-//    println("result: $result")
-//    transactionStore.setValue("foo", "789")
-//    val result2 = transactionStore.getValue("foo")
-//    println("result2: $result2")
-//    // ROLLBACK...
-//    transactionStore.rollback()
-//    val result3 = transactionStore.getValue("foo")
-//    println("result3: $result3")
-//    transactionStore.delete("foo")
-//    val result4 = transactionStore.getValue("foo")
-//    println("result4: $result4")
-//    // ROLLBACK...
-//    transactionStore.rollback()
-//    val result5 = transactionStore.getValue("foo")
-//    println("result5: $result5")
+    transactionStore.setValue("foo", "123")
+    transactionStore.setValue("bar", "456")
+    // NEW TRANSACTION...
+    transactionStore.begin()
+    transactionStore.setValue("foo", "456")
+    // NEW TRANSACTION...
+    transactionStore.begin()
+    val count = transactionStore.count("456")
+    println("COUNT: $count")
+    val result = transactionStore.getValue("foo")
+    println("result: $result")
+    transactionStore.setValue("foo", "789")
+    val result2 = transactionStore.getValue("foo")
+    println("result2: $result2")
+    // ROLLBACK...
+    transactionStore.rollback()
+    val result3 = transactionStore.getValue("foo")
+    println("result3: $result3")
+    transactionStore.delete("foo")
+    val result4 = transactionStore.getValue("foo")
+    println("result4: $result4")
+    // ROLLBACK...
+    transactionStore.rollback()
+    val result5 = transactionStore.getValue("foo")
+    println("result5: $result5")
 
     /*
         Random test
      */
-    transactionStore.setValue("foo", "123")
-    transactionStore.setValue("bar", "456")
-    transactionStore.begin()
-    transactionStore.setValue("row", "100")
-    transactionStore.begin()
-    transactionStore.setValue("apple", "red")
-    transactionStore.begin()
-    transactionStore.delete("foo")
-    transactionStore.commit()
-   val result1 = transactionStore.getValue("foo")
-    println("result1: $result1")
-    val result2 = transactionStore.getValue("apple")
-    println("result2: $result2")
-    transactionStore.rollback()
-    val result3 = transactionStore.getValue("apple")
-    println("result3: $result3")
-    val result4 = transactionStore.getValue("foo")
-    println("result4: $result4")
-    val result5 = transactionStore.getValue("row")
-    println("result5: $result5")
-    transactionStore.rollback()
-    val result6 = transactionStore.getValue("row")
-    println("result6: $result6")
+//    transactionStore.setValue("foo", "123")
+//    transactionStore.setValue("bar", "456")
+//    transactionStore.begin()
+//    transactionStore.setValue("row", "100")
+//    transactionStore.begin()
+//    transactionStore.setValue("apple", "red")
+//    transactionStore.begin()
+//    transactionStore.delete("foo")
+//    transactionStore.commit()
+//   val result1 = transactionStore.getValue("foo")
+//    println("result1: $result1")
+//    val result2 = transactionStore.getValue("apple")
+//    println("result2: $result2")
+//    transactionStore.rollback()
+//    val result3 = transactionStore.getValue("apple")
+//    println("result3: $result3")
+//    val result4 = transactionStore.getValue("foo")
+//    println("result4: $result4")
+//    val result5 = transactionStore.getValue("row")
+//    println("result5: $result5")
+//    transactionStore.rollback()
+//    val result6 = transactionStore.getValue("row")
+//    println("result6: $result6")
 
 }
 
@@ -184,12 +184,8 @@ private class LocalDataStore {
 
     private val persistedStore: HashMap<String, String> = hashMapOf()
 
-    fun clear() {
-        persistedStore.clear()
-    }
-
-    fun putAll(map: Map<String, String>) {
-        persistedStore.putAll(map)
+    fun put(key: String, value: String) {
+        persistedStore[key] = value
     }
 
     fun getDataMap() = persistedStore.toMutableMap()
@@ -222,11 +218,12 @@ private class TransactionStoreImpl2 {
 
     fun commit() {
         if (transactionStack.size > 1) {
-            localDataStore.clear()
-            localDataStore.putAll(currentTransaction.map)
+            currentTransaction.map.forEach { (key, value) ->
+                localDataStore.put(key, value)
+                // Update parent transaction of current transaction before commit
+                transactionStack.getOrNull(transactionStack.lastIndex - 1)?.map?.set(key, value)
+            }
             transactionStack.removeLast()
-            // Update parent transaction of current transaction before commit
-            currentTransaction.map = localDataStore.getDataMap()
         } else {
             println("no transaction")
         }

@@ -185,7 +185,7 @@ internal data class NullableTransaction(
     var map: MutableMap<String, String?> = hashMapOf()
 )
 
-private class LocalDataSource {
+internal class LocalDataSource {
 
     private val persistedStore: HashMap<String, String?> = hashMapOf()
 
