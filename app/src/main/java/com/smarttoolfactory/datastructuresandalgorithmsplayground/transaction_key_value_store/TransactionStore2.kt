@@ -208,7 +208,6 @@ fun main() {
         println("row: $result6")
         val result7 = transactionStore.getValue("foo")
         println("foo: $result7")
-
 }
 
 private class LocalDataStore {

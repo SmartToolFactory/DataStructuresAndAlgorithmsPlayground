@@ -291,7 +291,7 @@ private class TransactionStoreImpl3 {
         var count = 0
         transactionStack.forEach { transaction: NullableTransaction ->
             val map = transaction.map
-            count = map.count { entry: Map.Entry<String, String?> ->
+            count += map.count { entry: Map.Entry<String, String?> ->
                 entry.value == value
             }
         }

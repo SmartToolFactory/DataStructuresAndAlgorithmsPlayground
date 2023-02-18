@@ -207,7 +207,7 @@ fun main() {
     println("row: $result6")
     val result7 = transactionStore.getValue("foo")
     println("foo: $result7")
-    }
+}
 
 private class TransactionStoreImpl4 {
 
@@ -265,7 +265,7 @@ private class TransactionStoreImpl4 {
             transactionStack.removeLast()
             cache.clear()
             transactionStack.forEach { nullableTransaction ->
-                nullableTransaction.map.forEach { (key, value)->
+                nullableTransaction.map.forEach { (key, value) ->
                     cache[key] = value
                 }
             }
@@ -279,14 +279,11 @@ private class TransactionStoreImpl4 {
     }
 
     fun count(value: String): Int {
-        var count = 0
-        transactionStack.forEach { transaction: NullableTransaction ->
-            val map = transaction.map
-            count = map.count { entry: Map.Entry<String, String?> ->
-                entry.value == value
-            }
+        val count = cache.count {
+            it.value == value
+        } + currentTransaction.map.count {
+            it.value == value
         }
-
         return count
     }
 }
