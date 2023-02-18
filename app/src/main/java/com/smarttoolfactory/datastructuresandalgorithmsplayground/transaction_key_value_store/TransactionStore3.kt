@@ -126,58 +126,89 @@ fun main() {
         123
      */
 
-    transactionStore.setValue("foo", "123")
-    transactionStore.setValue("bar", "456")
-    // NEW TRANSACTION...
-    transactionStore.begin()
-    transactionStore.setValue("foo", "456")
-    // NEW TRANSACTION...
-    transactionStore.begin()
-    val count = transactionStore.count("456")
-    println("COUNT: $count")
-    val result = transactionStore.getValue("foo")
-    println("result: $result")
-    transactionStore.setValue("foo", "789")
-    val result2 = transactionStore.getValue("foo")
-    println("result2: $result2")
-    // ROLLBACK...
-    transactionStore.rollback()
-    val result3 = transactionStore.getValue("foo")
-    println("result3: $result3")
-    transactionStore.delete("foo")
-    val result4 = transactionStore.getValue("foo")
-    println("result4: $result4")
-    // ROLLBACK...
-    transactionStore.rollback()
-    val result5 = transactionStore.getValue("foo")
-    println("result5: $result5")
-
-    /*
-        Random test
-     */
 //    transactionStore.setValue("foo", "123")
 //    transactionStore.setValue("bar", "456")
+//    // NEW TRANSACTION...
 //    transactionStore.begin()
-//    transactionStore.setValue("row", "100")
+//    transactionStore.setValue("foo", "456")
+//    // NEW TRANSACTION...
 //    transactionStore.begin()
-//    transactionStore.setValue("apple", "red")
-//    transactionStore.begin()
-//    transactionStore.delete("foo")
-//    transactionStore.commit()
-//    val result1 = transactionStore.getValue("foo")
-//    println("result1: $result1")
-//    val result2 = transactionStore.getValue("apple")
+//    val count = transactionStore.count("456")
+//    println("COUNT: $count")
+//    val result = transactionStore.getValue("foo")
+//    println("result: $result")
+//    transactionStore.setValue("foo", "789")
+//    val result2 = transactionStore.getValue("foo")
 //    println("result2: $result2")
+//    // ROLLBACK...
 //    transactionStore.rollback()
-//    val result3 = transactionStore.getValue("apple")
+//    val result3 = transactionStore.getValue("foo")
 //    println("result3: $result3")
+//    transactionStore.delete("foo")
 //    val result4 = transactionStore.getValue("foo")
 //    println("result4: $result4")
-//    val result5 = transactionStore.getValue("row")
-//    println("result5: $result5")
+//    // ROLLBACK...
 //    transactionStore.rollback()
-//    val result6 = transactionStore.getValue("row")
-//    println("result6: $result6")
+//    val result5 = transactionStore.getValue("foo")
+//    println("result5: $result5")
+
+    /*
+    Demo transactions
+    > SET foo 123
+    > SET bar 456
+    > BEGIN
+    > SET foo 500
+    > SET row 100
+    > BEGIN
+    > SET row 100
+    > BEGIN
+    > SET apple red
+    > DELETE foo
+    > COMMIT
+    > GET foo
+    key not set
+    > GET apple
+    red
+    > ROLLBACK
+    > GET apple
+    key not set
+    > GET foo
+    500
+    > GET row
+    100
+    > ROLLBACK
+    > GET row
+    key not set
+    > GET foo
+    123
+ */
+
+    transactionStore.setValue("foo", "123")
+    transactionStore.setValue("bar", "456")
+    transactionStore.begin()
+        transactionStore.setValue("foo", "500")
+        transactionStore.setValue("row", "100")
+        transactionStore.begin()
+            transactionStore.setValue("apple", "red")
+            transactionStore.begin()
+                transactionStore.delete("foo")
+            transactionStore.commit()
+            val result1 = transactionStore.getValue("foo")
+            println("foo: $result1")
+            val result2 = transactionStore.getValue("apple")
+            println("apple: $result2")
+        transactionStore.rollback()
+        val result3 = transactionStore.getValue("apple")
+        println("apple: $result3")
+        val result4 = transactionStore.getValue("foo")
+        println("foo: $result4")
+        val result5 = transactionStore.getValue("row")
+        println("row: $result5")
+    transactionStore.rollback()
+    val result6 = transactionStore.getValue("row")
+    println("row: $result6")
+    val result7 = transactionStore.getValue("foo")
+    println("foo: $result7")
 
 }
 
@@ -232,7 +263,9 @@ private class TransactionStoreImpl3 {
     fun commit() {
         if (transactionStack.size > 1) {
             currentTransaction.map.forEach { (key, value) ->
-                localDataStore.put(key, value)
+                value?.let {
+                    localDataStore.put(key, it)
+                }
                 // Update parent transaction of current transaction before commit
                 transactionStack.getOrNull(transactionStack.lastIndex - 1)?.map?.set(key, value)
             }
@@ -256,10 +289,10 @@ private class TransactionStoreImpl3 {
 
     fun count(value: String): Int {
         var count = 0
-        transactionStack.forEach {
-            val map = it.map
-            if (map.containsValue(value)) {
-                count++
+        transactionStack.forEach { transaction: NullableTransaction ->
+            val map = transaction.map
+            count = map.count { entry: Map.Entry<String, String?> ->
+                entry.value == value
             }
         }
 
