@@ -3,7 +3,6 @@ package com.smarttoolfactory.datastructuresandalgorithmsplayground.algorithms
 import android.os.Build
 import androidx.annotation.RequiresApi
 
-@RequiresApi(Build.VERSION_CODES.N)
 fun main() {
     val node = initNode()
     node.printNodes()
@@ -135,6 +134,6 @@ private fun initNode(): Node {
     return head
 }
 
-class Node(var data: Int) {
+class Node(val data: Int) {
     var next: Node? = null
 }

@@ -1,11 +1,9 @@
 package com.smarttoolfactory.datastructuresandalgorithmsplayground.algorithms
 
 import kotlin.math.abs
-import kotlin.system.measureTimeMillis
 
 
 fun main() {
-
 
 
     /*
@@ -26,38 +24,49 @@ fun main() {
     /*
         TWO SUM
      */
-//    val twoSumArray = arrayOf(1, 3, 5, 7, 8, 11, 15)
-//    val target = 9
+    val twoSumArray = arrayOf(1, 3, 5, 7, 8, 11, 15)
+    val target = 9
+
 //
 //    val twoSumResult = twoSum(twoSumArray, target)
 ////    val twoSumResult = twoSumHashMap(twoSumArray, target)
 //    println("twoSumResult: [${twoSumResult[0]}, ${twoSumResult[1]}]")
 
     /*
-        REVERSE INTEGER
-     */
+        THREE SUM
+    */
+    val threeSumResult = sumOfThreeInts(twoSumArray, 13)
+    println("result: $threeSumResult")
 
-    val reverseInteger = reverseOfInteger(123)
-    println("Reverse: $reverseInteger")
-
-//    var swapArray = arrayOf(4, 3, 1, 2) // Swap count 3
-    var swapArray = arrayOf(3, 2, 0, 1) // Swap count 3
-    var swapArray2 = arrayOf(2, 3, 4, 1, 5) // Swap count 3
-    var swapArray3 = arrayOf(7, 1, 3, 2, 4, 5, 6) // Swap count 5
-    var swapArray4 = arrayOf(0, 6, 5, 7, 3, 1, 4, 2) // Swap count
-    var swapArray5 = arrayOf(3, 4, 1, 2, 6, 7, 5) // Swap count 4
+}
 
 
-    var minSwap = 0
-    val time = measureTimeMillis {
-        minSwap = minimumSwaps2(swapArray)
+fun sumOfThreeInts(nums: Array<Int>, target: Int): Boolean {
+
+    for (index in 0 until nums.lastIndex) {
+        val currentValue = nums[index]
+        val complement = target - currentValue
+        val array = sumOfTwoInts(nums, complement, index + 1)
+        if (array != null) {
+            return true
+        }
     }
+    return false
+}
 
-    println("Min SWAP: $minSwap, time: $time")
+fun sumOfTwoInts(nums: Array<Int>, target: Int, startIndex: Int = 0): Array<Int>? {
+    val lookupTable = hashMapOf<Int, Int>()
 
+    for (index in startIndex..nums.lastIndex) {
+        val currentValue = nums[index]
+        val complement = target - currentValue
+        if (lookupTable.contains(complement)) {
+            return arrayOf(lookupTable[complement]!!, index)
+        }
 
-//    staircase(6)
-
+        lookupTable[currentValue] = index
+    }
+    return null
 }
 
 
@@ -127,6 +136,7 @@ private fun findNumberOfTriplets(arr: Array<Int>): Int {
     return [0, 1].
  */
 
+
 fun twoSum(nums: Array<Int>, target: Int): Array<Int> {
 
     var left = 0
@@ -143,7 +153,7 @@ fun twoSum(nums: Array<Int>, target: Int): Array<Int> {
 
         when {
             sum < target -> left++
-            sum > target -> right--
+            else -> right--
         }
 
 
@@ -359,20 +369,20 @@ fun staircase(n: Int) {
  *
  * Write a function to find the longest common prefix string amongst an array of strings.
 
-    If there is no common prefix, return an empty string "".
+If there is no common prefix, return an empty string "".
 
-    Example 1:
+Example 1:
 
-    Input: ["flower","flow","flight"]
-    Output: "fl"
-    Example 2:
+Input: ["flower","flow","flight"]
+Output: "fl"
+Example 2:
 
-    Input: ["dog","racecar","car"]
-    Output: ""
-    Explanation: There is no common prefix among the input strings.
-    Note:
+Input: ["dog","racecar","car"]
+Output: ""
+Explanation: There is no common prefix among the input strings.
+Note:
 
-    All given inputs are in lowercase letters a-z.
+All given inputs are in lowercase letters a-z.
  */
 fun longestCommonPrefix(strs: Array<String>): String {
 
